@@ -10,6 +10,28 @@ notes.get('/', (req, res) => {
     })
 });
 
+notes.delete('/:id', (req, res) => {
+    if(!req.params.id) { res.status(400).send('No ID provided to delete.'); }
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+        if (err) { console.error(err); return; }
+        const currData = JSON.parse(data);
+
+        for(let i=0; i<currData.length; i++){
+            if(currData[i].id == req.params.id) {
+                spliceData = currData.splice(i, 1);
+    
+                fs.writeFile("./db/db.json", JSON.stringify(currData), (err) => {
+                    err ? console.error(err) : console.log(`Note ${req.params.id} has been deleted from JSON file.`)
+                })
+            } else {
+
+            }
+        }
+    
+    res.json(currData);
+    });
+});
+
 notes.post('/', (req,res) => {
     const { title, text } = req.body;
     if(!title || !text) { return res.status(400).send(`No data provided in ${req.method}.`); }
@@ -33,18 +55,12 @@ notes.post('/', (req,res) => {
         currData.push(newNote);
 
         fs.writeFile("./db/db.json", JSON.stringify(currData, null, 4), (err) => {
-            err ? console.error(err) : console.log(`Review for ${newReview.product} has been written to JSON file`)
+            err ? console.error(err) : console.log(`New Note ${newNote.id} has been written to JSON file.`)
         })
     })
 
-    res.status(201).json(response);
+    res.json(response);
 
-});
-
-notes.delete('/:id', (req, res) => {
-    if(!req.params.id) { res.status(400).send('No ID provided to delete.'); }
-    
-    res.send(`${req.method} was received on id: ${req.params.note_id}`);
 });
 
 module.exports = notes;
