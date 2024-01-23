@@ -2,17 +2,20 @@
 const express = require('express');
 const path = require('path');
 const port = process.env.port || 3001;
-const routes = require('./routes/index.js');
+const api = require('./routes/index.js');
 
 const app = express();
 
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+//Direct /api request to the routes/index.js file for handling
+app.use('/api', api);
 
 //Set to serve static pages from /public/ folder
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-    res.send(`Starter routing. Updated as we go.`)
+    console.log('N/A')
 })
 
 app.get('/notes', (req, res) => {
